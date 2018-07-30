@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+<script src="new.js"></script>
+<script>
+	function P(name){
+		this.name = name;
+	}
+	P.prototype.getName = function(){
+		return this.name;
+	}
+	P.prototype.setName = function(name){
+		this.name = name;
+	}
+	var obj = newObj(P,'Ken');
+	var obj1 = new P('Ken');
+	console.log('这是由一个newObj封装类似于new操作的函数创建的实例化对象' , obj);
+	console.log('这是由new操作创建出来的实例化对象' , obj1)
+	console.log('你可以看到打印出来的对象完全一模一样');
+
+
+	var a = new Object();
+	console.log(a.__proto__);
+
+	console.log(Object.prototype);
+
+	console.log(a.__proto__===Object.prototype);
+	/**
+	 * JavaScript 给对象提供了一个名为__proto__的隐藏属性
+	 * 某个对象的__proto__属性默认会指
+	 * 向它的构造器的原型对象，即{Constructor}.prototype。
+	 * 在一些浏览器中，__proto__被公开出来
+	 * 实际上，__proto__就是对象跟“对象构造器的原型”
+	 * 联系起来的纽带。正因为对象要通过
+	 * __proto__属性来记住它的构造器的原型，
+	 * 所以我们用上一节的 objectFactory 
+	 * 函数来模拟用 new创建对象时， 
+	 * 需要手动给 obj 对象设置正确的__proto__指向。
+	 */
+	// 如果对象无法响应某个请求，它会把这个请求委托给它的构造器的原型
+	
+	var obj = {'key':'Ken'};
+	var A = function (){};
+	console.log(obj)
+	console.log(A)
+	A.prototype = obj;
+	console.log(A.prototype===obj);
+	var a = new A();
+	console.log(a)
+	console.log(a['key']);
+	/**
+	 * 首先，尝试遍历对象 a 中的所有属性，
+	 * 但没有找到 name 这个属性。
+	 * 查找 name 属性的这个请求被委托给对象 a 
+	 * 的构造器的原型，它被 a.__proto__ 记录着并且
+	 * 指向 A.prototype，而 A.prototype 被设置为对象 obj
+	 * 在对象 obj 中找到了 name 属性，并返回它的值
+	 */
+	// 当我们期望得到一个“类”继承自另外一个“类”的效果时，往往会用下面的代码来模拟实现
+	console.log('-----------------------------')
+	var B = function(){};
+	B.prototype = {key:'Ken'};
+
+	var C = function(){};
+	C.prototype = new B();
+	console.log(C)
+
+	var b = new B();
+	var c = new C();
+	console.log(c)
+	console.log(b)
+	console.log(b.key);
+	console.log(c.__proto__ === C.prototype);//true
+	console.log(c.__proto__.__proto__==b.__proto__)//true
+	console.log(C.prototype==new B());//false
+</script>
+</body>
+</html>
