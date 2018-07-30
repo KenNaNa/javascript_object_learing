@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	Function.prototype.before = function(beforeFn){
+		var __self = this;
+
+		return function(){
+			beforeFn.apply(this,arguments);
+
+			return __self.apply(this,arguments);
+		}
+	}
+	// beforefn 和 原 函 数 __self 共 用 一 组 参 数 列 表
+// arguments，当我们在 beforefn 的函数体内改变 arguments 的时候，原函数__self 接收的参数列
+// 表自然也会变化。
+
+var func = function(param){
+	console.log(param);
+}
+
+func = func.before(function(param){
+	param.b = 'b';
+})
+
+func({a:'a'});
+
+
+// 现在有一个用于发起 ajax 请求的函数，这个函数负责项目中所有的 ajax 异步请求：
+
+var ajax = function(type,url,param){
+	console.dir(param);
+	// 发送ajax请求的代码省略;
+}
+
+ajax('get','http://www.baidu/com/',{
+	name:'Ken',age:18,
+})
+// ajax 函数在项目中一直运转良好，跟 cgi 的合作也很愉快。直到有一天，我们的网站遭受了
+// CSRF 攻击。解决 CSRF 攻击最简单的一个办法就是在 HTTP 请求中带上一个 Token 参数。
+
+var getToken = function(){
+	return 'Token';
+}
+
+
+var ajax = function(type,url,param){
+	param = param || {};
+	param.Token = getToken();
+}
+
+// 虽然已经解决了问题，但我们的 ajax 函数相对变得僵硬了，每个从 ajax 函数里发出的请求
+// 都自动带上了 Token 参数，虽然在现在的项目中没有什么问题，但如果将来把这个函数移植到其
+// 他项目上，或者把它放到一个开源库中供其他人使用， Token 参数都将是多余的。
+// 也许另一个项目不需要验证 Token，或者是 Token 的生成方式不同，无论是哪种情况，都必
+// 须重新修改 ajax 函数。
+
+var ajax = function(type,url,param){
+	console.log(param);
+}
+
+var getToken = function(){
+	return 'Token';
+}
+
+ajax = ajax.before(function(type,url,param){
+	param.Token = getToken();
+})
+
+ajax( 'get', 'http:// xxx.com/userinfo', { name: 'sven' } );
+</script>	
+</body>
+</html>
