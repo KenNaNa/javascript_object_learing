@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	(function(window,undefined){
+
+		// 创建jQeury对象
+		var jQuery = (function(){
+			var jQuery = function(selector,context){
+				return new jQuery.fn.init(selector,context,rootjQuery);
+			}
+
+			jQuery.fn = jQuery.peototype = {
+				constructor:jQuery,
+				init:function(selector,context,rootjQuery){
+					// selector有以下7种分支情况
+					// DOM元素 包装成jQuery对象，直接返回
+					
+					// body优化 从document.body读取
+					
+					// 字符串：HTML标签，document.createElement
+					// HTML字符串，document.createDocumentFragment
+					// #id, document.getElementById
+					// 选择器表达式 $(…).find
+					
+					// 函数 注册到dom ready的回调函数
+					
+					// 最后返伪数组
+					
+				};
+			}
+
+
+
+			jQuery.fn.init.prototype = jQuery.fn;
+
+
+
+			// 扩展函数
+			jQuery.extend = jQuery.fn.extend = function(){};
+
+
+			// 在jQuery上扩展静态方法
+			
+
+			jQuery.extend({
+				//ready bindReady
+				//isPlainObject
+				//isEmptyObject
+				//parseJSON parseXML
+				//each makeArray merge grep map
+				//proxy
+				//access
+				//uaMatch
+				//sub
+				//browser
+			});
+			// 到这里，jQuery对象构造完成，后边的代码都是对jQuery或jQuery对象的扩展
+
+			return jQuery;
+		})(); 
+
+		window.jQuery = window.$ = jQuery;
+	})(window);
+
+
+	//  jQuery对象不是通过 new jQuery 创建的，而是通过 new jQuery.fn.init 创建的
+	//  jQuery对象就是jQuery.fn.init对象
+	//  如果执行new jQeury(),生成的jQuery对象会被抛弃，最后返回 jQuery.fn.init对象；因此可以直接调用jQuery(selector, context )，没有必要使用new关键字
+	//  先执行jQuery.fn = jQuery.prototype，再执行jQuery.fn.init.prototype = jQuery.fn，合并后的代码如下：
+	//  jQuery.fn.init.prototype = jQuery.fn = jQuery.prototype
+	//  所有挂载到jQuery.fn的方法，相当于挂载到了jQuery.prototype，即挂载到了jQuery 函数上（一开始的jQuery = function( selector, context ) ），但是最后都相当于挂载到了 jQuery.fn.init.prototype，即相当于挂载到了一开始的jQuery 函数返回的对象上，即挂载到了我们最终使用的jQuery对象上。
+</script>	
+</body>
+</html>

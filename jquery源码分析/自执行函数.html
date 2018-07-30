@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	(function(window,undefined){
+
+		// 创建JQuery对象
+		var jQeury = function(selector,context){
+			return new jQuery.fn.init(selector,context,rootjQuery);
+		}
+		console.log(window);
+		console.info(this);
+
+		console.info(arguments);
+
+		undefined = 'now its defined';
+
+		console.log(undefined);
+
+		// 工具函数
+		
+
+		// 异步队列
+		
+
+		// 浏览器测试
+		
+
+		// 数据缓存
+		
+
+		// 队列
+		
+
+		// 属性操作
+		
+
+		// 选择器
+		
+
+		// DOM遍历
+		
+
+		// DOM操作
+		
+
+
+		// CSS操作
+		
+
+		// 异步请求
+		
+
+		// 动画FX
+		
+
+		// 坐标和大小
+		
+
+
+		window.jQuery = window.$ = jQeury;
+
+
+	})(window);
+
+	// 通过定义一个匿名函数，创建一个私有的命名空间，
+	// 该命名空间的变量和方法
+	// 不会破坏全局的变量和方法
+	// 通过传入window变量，使得全局变量变为局部变量
+	// 当jquery代码模块window时，就不用将作用域链推回到顶层作用域，
+	// 这样可以更快的访问window
+	// 将window作为参数传入，可以在压缩代码时进行优化
+	// 
+	// 为什么传入undefined呢
+	// 在自执行函数的作用域内，确保undefined是真的未定义的
+	// 因为undefined能够被重新赋值
+	
+</script>	
+</body>
+</html>
