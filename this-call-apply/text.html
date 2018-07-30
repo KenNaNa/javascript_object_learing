@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<script src="strict.js"></script>
+</head>
+<body>
+<div id="div1">我是一个div</div>
+<script>
+window.id = 'window';
+ document.getElementById( 'div1' ).onclick = function(){
+ 	alert ( this.id ); // 输出：'div1'
+ 	var _this = this;
+ 	// 此时有一种简单的解决方案，可以用一个变量保存 div 节点的引用：
+ 	var callback = function(){
+ 		alert ( this.id ); // 输出：'window'
+ 	}
+ 	var cb = function(){
+ 		alert( _this.id );//div1
+ 	}
+ 	callback();
+ 	cb()
+ }; 
+
+</script>	
+</body>
+</html>
