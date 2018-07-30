@@ -1,0 +1,3 @@
+var arr = [{type:'TextField',val:'用户名'},
+			   {type:'PassWordField',val:'密码'},
+			   {type:'EmailField',val:'邮箱地址'}];
