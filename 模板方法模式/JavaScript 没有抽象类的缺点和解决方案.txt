@@ -1,0 +1,41 @@
+avaScript 并没有从语法层面提供对抽象类的支持。抽象类的第一个作用是隐藏对象的具
+体类型，由于 JavaScript 是一门“类型模糊”的语言，所以隐藏对象的类型在 JavaScript 中并
+不重要。
+另一方面， 当我们在 JavaScript 中使用原型继承来模拟传统的类式继承时，并没有编译器帮
+助我们进行任何形式的检查，我们也没有办法保证子类会重写父类中的“抽象方法”。
+我们知道， Beverage.prototype.init 方法作为模板方法，已经规定了子类的算法框架，代码
+如下：
+Beverage.prototype.init = function(){
+	this.boilWater();
+	this.brew();
+	this.pourInCup();
+	this.addCondiments();
+};
+
+如果我们的 Coffee 类或者 Tea 类忘记实现这 4 个方法中的一个呢？拿 brew 方法举例，如果
+我们忘记编写 Coffee.prototype.brew 方法，那么当请求 coffee 对象的 brew 时，请求会顺着原型
+链找到 Beverage“父类”对应的 Beverage.prototype.brew 方法，而 Beverage.prototype.brew 方法
+到目前为止是一个空方法，这显然是不能符合我们需要的。
+在 Java 中编译器会保证子类会重写父类中的抽象方法，但在 JavaScript 中却没有进行这些检
+查工作。我们在编写代码的时候得不到任何形式的警告，完全寄托于程序员的记忆力和自觉性是
+很危险的，特别是当我们使用模板方法模式这种完全依赖继承而实现的设计模式时。
+下面提供两种变通的解决方案。
+ 第 1 种方案是用鸭子类型来模拟接口检查，以便确保子类中确实重写了父类的方法。但模
+拟接口检查会带来不必要的复杂性，而且要求程序员主动进行这些接口检查，这就要求
+我们在业务代码中添加一些跟业务逻辑无关的代码。
+ 第 2 种方案是让 Beverage.prototype.brew 等方法直接抛出一个异常，如果因为粗心忘记编
+写 Coffee.prototype.brew 方法，那么至少我们会在程序运行时得到一个错误：
+Beverage.prototype.brew = function(){
+	throw new Error( '子类必须重写 brew 方法' );
+};
+Beverage.prototype.pourInCup = function(){
+	throw new Error( '子类必须重写 pourInCup 方法' );
+};
+Beverage.prototype.addCondiments = function(){
+	throw new Error( '子类必须重写 addCondiments 方法' );
+};
+第 2 种解决方案的优点是实现简单，付出的额外代价很少；缺点是我们得到错误信息的时间
+点太靠后
+我们一共有 3 次机会得到这个错误信息，第 1 次是在编写代码的时候，通过编译器的检查来
+得到错误信息；第 2 次是在创建对象的时候用鸭子类型来进行“接口检查”；而目前我们不得不
+利用最后一次机会，在程序运行过程中才知道哪里发生了错误。
