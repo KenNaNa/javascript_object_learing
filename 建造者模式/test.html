@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script src="建造者模式.js"></script>	
+<script>
+	var person = new Person('xiao ming','code');
+	console.log(person.skill);
+	console.log(person.name.FirstName);
+	console.log(person.work.work);
+	console.log(person.work.workDescription);
+	person.work.changeDescription('更改一下职位');
+	console.log(person.work.workDescription);
+</script>
+</body>
+</html>
