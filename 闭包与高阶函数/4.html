@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	// var appendDiv = function(){
+	// 	for(var i=0;i<100;i++){
+	// 		var div = document.createElement('div');
+	// 		div.innerHTML = i;
+	// 		div.className = 'class_' + i;
+	// 		document.body.appendChild(div);
+	// 		div.style.display = 'none';
+	// 	}
+	// }
+	// appendDiv()
+	// 
+	// 
+	var appendDiv = function(cb){
+		for(var i=0;i<100;i++){
+			var div = document.createElement('div');
+			div.innerHTML = i;
+			div.className = 'class_' + i;
+			document.body.appendChild(div);
+
+			if(typeof cb==='function'){
+				cb(div);
+			}
+		}
+	}
+
+	appendDiv(function(node){
+		node.style.display = 'none';
+	})
+</script>	
+</body>
+</html>
