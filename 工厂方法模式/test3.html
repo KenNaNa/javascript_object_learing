@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<div id="container"></div>
+<script src='arr
+
+
+.json'></script>
+<script src='script3.js'></script>
+<script>
+	// new FormFactory('TextField','用户名')
+	// new FormFactory('PassWordField','密码')
+	// new FormFactory('EmailField','邮箱地址')
+	// var arr = [{type:'TextField',val:'用户名'},
+	// 		   {type:'PassWordField',val:'密码'},
+	// 		   {type:'EmailField',val:'邮箱地址'}];
+	var length = arr.length;
+	for(var i=0;i<length;i++){
+		FormFactory(arr[i].type,arr[i].val)
+	}
+</script>	
+</body>
+</html>

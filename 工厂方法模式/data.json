@@ -1,0 +1,9 @@
+var data = [
+	{type:'Javascript',content:'javascript哪家强'},
+	{type:'Java',content:'java哪家强'},
+	{type:'Php',content:'php哪家强'},
+	{type:'Ui',content:'ui哪家强'},
+	{type:'Node',content:'node.js哪家强'},
+	{type:'NLP',content:'NLP哪家强'}
+]
+
