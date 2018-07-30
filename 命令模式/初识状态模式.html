@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	// 第一个例子
+	var Light = function(){
+		this.state = 'off';//给电灯设置初始状态off
+		this.button = null;//电灯开关按钮
+	}
+
+	Light.prototype.init = function(){
+		var button = document.createElement('button');
+		var self = this;
+
+		button.innerHTML = '开关';
+
+		this.button = document.body.appendChild(button);
+
+		this.button.onclick = function(){
+			self.buttonWasPressed();
+		}
+
+		// 当开关被按下时，程序会调用 self.buttonWasPressed 方法， 开关按下之后的所有行为，都将被封装在这个方法里，代码如下：
+		
+		Light.prototype.buttonWasPressed = function(){
+			if(this.state==='off'){
+				console.log('开灯');
+				this.state = 'on';
+			}else{
+				console.log('关灯');
+				this.state = 'off';
+			}
+		}
+
+	}
+
+	var light = new Light();
+
+	light.init();
+
+/**
+ * 令人遗憾的是，这个世界上的电灯并非只有一种。许多酒店里有另外一种电灯，这种电灯也
+只有一个开关，但它的表现是：第一次按下打开弱光，第二次按下打开强光，第三次才是关闭电
+灯。现在必须改造上面的代码来完成这种新型电灯的制造
+ */
+	Light.prototype.buttonWasPressed = function(){
+		if(this.state === 'off'){
+			console.log('弱光');
+			this.state = 'weakLight';
+		}else if(this.state==='weakLight'){
+			console.log('强光');
+			this.state = 'strongLight';
+		}else if(this.state==='strongLight'){
+			console.log('关灯');
+			this.state = 'off';
+		}
+	}
+</script>	
+</body>
+</html>
