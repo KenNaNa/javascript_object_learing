@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<div style="position:absolute;background:blue" id="div">我是 div</div>
+<button id='btn' style='position: absolute;top:50px;'>点我动画开始</button>
+<script src="使用策略模式实现缓动动画.js"></script>	
+<script>
+	var oDiv = document.getElementById('div');
+	var oBtn = document.getElementById('btn');
+	oBtn.onclick = function(){
+		var animate = new Animate(div);
+		animate.start('right',500,1000,'strongEaseOut');
+		animate.start('top',1500,500,'strongEaseIn');
+	}
+</script>
+</body>
+</html>
