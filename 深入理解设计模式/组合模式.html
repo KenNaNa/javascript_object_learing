@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	/**
+	 *
+	 * 一个公司
+	 * 有一个财务部门
+	 * 		- 张1
+	 * 		- 张2
+	 * 		- 张3
+	 * 有一个销售部门
+	 * 		- 张四
+	 * 		- 张五
+	 * 		- 张六
+	 *
+	 *
+	 * 实际任务是落实到人
+	 * 也就是说只有人才具有具体方法实现
+	 */
+	
+
+	var Org = function(name){
+		this.name = name;
+		this.dept = [];
+	}
+
+	Org.prototype = {
+		constructor:Org,
+		addDept:function(child){
+			this.dept.push(child);
+			return this;
+		},
+		getDept:function(){
+			return this.dept;
+		}
+	}
+
+	var Dept = function(name){
+		this.name = name;
+		this.persons = [];
+	}
+
+	Dept.prototype.addPersons = function(person){
+		this.persons.push(person);
+		return this;
+	}
+
+	Dept.prototype.getPersons = function(){
+		return this.persons;
+	}
+
+
+	var Person = function(name){
+		this.name = name;
+	}
+
+	// 给人添加方法
+	Person.prototype = {
+		constructor:Person,
+		hardworking:function(){
+			document.write(this.name + '努力工作');
+		},
+		sleeping:function(){
+			console.log(this.name + '努力睡觉');
+		}
+	}
+
+	var p1 = new Person('Ken1');
+	var p2 = new Person('Ken2');
+	var p3 = new Person('Ken3');
+	var p4 = new Person('Ken4');
+	var p5 = new Person('Ken5');
+	var p6 = new Person('Ken6');
+
+
+	var dept1 = new Dept('开发部门');
+
+	dept1.addPersons(p1).addPersons(p2).addPersons(p3);
+
+
+	var dept2 = new Dept('销售部门');
+
+	dept2.addPersons(p4).addPersons(p5).addPersons(p6);
+
+	var org = new Org('Ken');
+
+	org.addDept(dept1).addDept(dept2);
+
+
+	for(var i = 0,depts = org.getDept();i<depts.length;i++){
+		var dept = depts[i];
+		for(var j=0,persons = dept.getPersons();j<persons.length;j++){
+			if(persons[j].name === 'Ken3'){
+				persons[j].hardworking();
+			}
+		}
+	}
+
+</script>	
+</body>
+</html>

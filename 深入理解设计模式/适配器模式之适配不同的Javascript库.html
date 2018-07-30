@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<input id='ini' />
+<input id='ini2' />
+<script>
+	// 老的东西现在使用
+	var obj = {
+		str1:"111",
+		str2:"222",
+		str3:"333"
+	}
+
+	function adapter(obj){
+		interfaceMathod(obj.str1, obj.str2, obj.str3);
+	}
+
+	function interfaceMathod(x,y,z){
+
+	}
+
+	// 一个企业，可能不同的人使用不同的框架
+	// 那就要进行适配模式了
+	// prototype $ ,function()不需要传递任何参数
+	// YUI get ,function()传递一个参数
+	function $(){
+		var eles = [];
+		for(var i=0;i<arguments.length;i++){
+			var ele = arguments[i];
+			if(typeof ele === 'string'){
+				ele = document.getElementById(ele);
+			}
+			else if(arguments.length===1){
+				return ele;
+			}
+			eles.push(ele);
+		}
+		return eles;
+	}
+
+	var YAHOO = {};
+	YAHOO.get = function(el){
+		if(typeof el === "string"){
+			return document.getElementById(el);
+		}
+		if(el instanceof Array){
+			var eles = [];
+			for(var i=0,len=el.length;i<len;i++){
+				eles[i] = YAHOO.get(el[i]);
+			}
+			return eles;
+		}
+		if(el){
+			return el;
+		}else{
+			return null;
+		}
+	}
+
+	// 适配器
+	// prototype 转 YAHOO
+	function YAHOOPrototypeAdapter(){
+		// YAHOO.YUI.get()
+		// 参数为一个
+		if(arguments.length===1){
+			YAHOO.get(arguments[0]);
+		}else{
+			$.apply(window,arguments);
+		}
+	}
+	window.onload = function(){
+		var domarr = $('ini','ini2');
+		alert(domarr);
+
+		var domarr = YAHOO.get(["ini","ini2"]);
+		alert(domarr);
+	}
+</script>	
+</body>
+</html>

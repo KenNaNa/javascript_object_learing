@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	
+
+	// 乔模式的特权函数
+	var publicClass = function(){
+		// 私有变量
+		var name = 'Ken';
+
+		// setter方法
+		this.getName = function(){
+			return name;
+		}
+	}
+
+	var p1 = new publicClass();
+	console.log(p1.getName());
+
+
+
+	var PublicClass = function(){
+		// 私有化函数
+		var privateH = function(){
+			console.log('我是似有函数');
+		}
+
+
+		// 可以进行单元测试
+		privateH();
+
+		// 方法
+		this.getPrivateH = function(){
+			return privateH();
+		}
+	}
+
+
+	var p2 = new PublicClass();
+	p2.getPrivateH();
+
+
+
+	// 用桥模式把多个单体组织起来
+	var class1 = function(a,b,c){
+		this.a = a;
+		this.b = b;
+		this.c = c;
+	}
+
+
+	var class2 = function(d,e){
+		this.d = d;
+		this.e = e;
+	}
+
+
+	var bridgeClass = function(a,b,c,d,e){
+		var c1 = new class1(a, b, c);
+		var c2 = new class2(d, e);
+	}
+</script>	
+</body>
+</html>

@@ -1,0 +1,128 @@
+在网络上的任何地方，我们都知道Javascript具有原型继承。但是，Javascript仅默认提供了与new操作员的原型继承的特定情况。因此，大部分解释都让人难以理解。本文旨在阐明什么是原型继承，以及如何在Javascript中真正使用它。
+
+原型继承定义
+当你阅读关于Javascript原型继承时，你经常会看到像这样的定义：
+
+当访问对象的属性时，JavaScript将向上遍历原型链，直到找到具有所请求名称的属性。Javascript花园
+
+大多数Javascript实现使用__proto__属性来表示原型链中的下一个对象。我们将沿着这条之间有什么区别见__proto__及prototype。
+
+注意：__proto__是非标准的，不应该在你的代码中使用。在文章中用它来解释Javascript继承是如何工作的。
+以下代码显示了JavaScript引擎如何检索属性（用于阅读）。
+function getProperty(obj, prop) {
+  if (obj.hasOwnProperty(prop))
+    return obj[prop]
+ 
+  else if (obj.__proto__ !== null)
+    return getProperty(obj.__proto__, prop)
+ 
+  else
+    return undefined
+}
+我们来看一下通常的类例子：2D点。一个点有两个坐标x，y和方法print。
+
+使用前写的原型继承的定义，我们将目标点具有三个属性：x，y和print。为了创建一个新的起点，我们只是做一个新的对象与__proto__设置为Point。
+
+var Point = {
+  x: 0,
+  y: 0,
+  print: function () { console.log(this.x, this.y); }
+};
+ 
+var p = {x: 10, y: 20, __proto__: Point};
+p.print(); // 10 20
+Javascript奇怪的原型继承
+令人困惑的是，每个人都用这个定义教导Javascript原型继承，但是并没有给出这个代码。相反，他们给了这样的东西：
+
+function Point(x, y) {
+  this.x = x;
+  this.y = y;
+}
+Point.prototype = {
+  print: function () { console.log(this.x, this.y); }
+};
+ 
+var p = new Point(10, 20);
+p.print(); // 10 20
+这与上面给出的代码完全不同。点现在是一个函数，我们使用一个prototype属性，new运算符。我勒个去！？
+
+如何new运作
+Brendan Eich希望Javascript看起来像传统的面向对象编程语言，如Java和C ++。在那些中，我们使用new运算符来创建一个类的新实例。所以他写了一个newJavascript 的运算符。
+
+C ++有构造函数的概念，它初始化实例属性。因此，new操作员必须定位一个功能。
+我们需要把对象的方法放在某个地方。由于我们正在研究原型语言，因此让我们将它放在函数的原型属性中。
+该new运营商需要一个功能F和参数：new F(arguments...)。它有三个简单的步骤：
+
+创建类的实例。它是__proto__属性设置为的空对象F.prototype。
+初始化实例。该函数F是通过传递的参数调用的，并this设置为实例。
+返回实例
+现在我们明白了new操作符的作用，我们可以在Javascript中实现它。
+
+     function New (f) {
+/*1*/  var n = { '__proto__': f.prototype };
+       return function () {
+/*2*/    f.apply(n, arguments);
+/*3*/    return n;
+       };
+     }
+只是一个小测试，看看它的工作原理。
+
+function Point(x, y) {
+  this.x = x;
+  this.y = y;
+}
+Point.prototype = {
+  print: function () { console.log(this.x, this.y); }
+};
+ 
+var p1 = new Point(10, 20);
+p1.print(); // 10 20
+console.log(p1 instanceof Point); // true
+ 
+var p2 = New (Point)(10, 20);
+p2.print(); // 10 20
+console.log(p2 instanceof Point); // true
+Javascript中的真实原型继承
+在使用Javascript规格只给我们的new运营商一起工作。然而，道格拉斯克罗克福德找到了一种方法来利用new操作员来做真正的原型继承！他写了Object.create函数。
+
+Object.create = function (parent) {
+  function F() {}
+  F.prototype = parent;
+  return new F();
+};
+这看起来很奇怪，但它的功能非常简单。它只是创建一个新的对象，其原型设置为任何你想要的。如果我们允许使用以下内容，可以这样写__proto__：
+
+Object.create = function (parent) {
+  return { '__proto__': parent };
+};
+以下代码是我们使用真实原型继承的Point示例。
+
+var Point = {
+  x: 0,
+  y: 0,
+  print: function () { console.log(this.x, this.y); }
+};
+ 
+var p = Object.create(Point);
+p.x = 10;
+p.y = 20;
+p.print(); // 10 20
+结论
+我们已经看到了什么样的原型继承，以及Javascript如何实现它。
+
+然而，使用真正的原型继承（Object.create和__proto__）有一些缺点：
+
+不标准：__proto__是非标准的，甚至不推荐使用。原生的Object.create和Douglas Crockford的实现也不完全相同。
+未优化：Object.create（本地或自定义）尚未像new构建那样严格优化。它可以慢10倍。
+进一步阅读：
+
+道格拉斯克罗克福德：原型继承
+MDC文档：__proto__
+John Resig：getPrototypeOf
+Javascript Garden：Object.prototype
+Dmitry Shoshnikov：OOP：ECMAScript实现
+Angus Croll：了解Javascript原型
+Yehuda Katz：了解JavaScript函数调用和“this”
+奖金
+如果你能理解这张图片（来自ECMAScript标准）原型继承是如何工作的，你会得到一个免费的cookie！
+

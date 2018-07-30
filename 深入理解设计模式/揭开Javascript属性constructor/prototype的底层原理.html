@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	/**
+	 *  在Javascript语言中，constructor属性是专门为function而设计的，
+	 *  它存在于每一个function的prototype属性中。
+	 *  这个constructor保存了指向function的一个引用。
+	 *  在定义一个函数（代码如下所示）时，
+	 */
+	
+	function F(){};
+	// JavaScript内部会执行如下几个动作：
+	// 1为该函数添加一个原形属性（即prototype对象）. 
+	// 2为prototype对象额外添加一个constructor属性，
+	// 并且该属性保存指向函数F的一个引用。
+    /**
+     * 这样当我们把函数F作为自定义构造函数来创建对象的时候，对象实例内部会自动保存一个指向其构造函数（这里就是我们的自定义构造函数F）的prototype对象的一个属性__proto__，所以我们在每一个对象实例中就可以访问构造函数的prototype所有拥有的全部属性和方法，就好像它们是实例自己的一样。
+     */
+    
+    /**
+     * 当然该实例也有一个constructor属性了（从prototype那里获得的），这时候constructor的作用就很明显了，因为在这时，每一个对象实例都可以通过constrcutor对象访问它的构造函数，请看下面代
+     */
+    
+    var f = new F();
+
+    console.log(f.constructor===F);//true
+    console.log(f.constructor===F.prototype.constructor);//true
+
+
+    // 我们可以利用这个特性来完成下面的事情： 对象类型判断，如 
+   	if(f.constructor===F){
+   		console.log(f.constructor);
+   	}
+
+   	// 其实constructor的出现原本就是用来进行对象类型判断的，但是constructor属性易变，不可信赖。
+   	// 我们有一种更加安全可靠的判定方法：instanceof 操作符。
+   	if(f instanceof F){
+   		console.log(f.constructor);
+   	}
+
+
+   	// 原型链继承，由于constructor存在于prototype对象上，因此我们可以结合constructor沿着原型链找到最原始的构造函数，如下面代码
+   	
+   	function Base(){};
+
+   	function Sub1(){};
+   	Sub1.prototype = new Base();
+
+   	Sub1.prototype.constructor = Sub1;
+
+   	Sub1.superclass = Base.prototype;
+
+
+   	function Sub2(){};
+
+   	Sub2.prototype = new  Sub1();
+
+   	Sub2.prototype.constructor = Sub2;
+
+   	Sub2.superclass = Sub1.prototype
+
+   	console.log(Sub2.prototype.constructor);//ƒ Sub2(){}
+
+   	console.log(Sub2.superclass.constructor);//f Sub1(){}
+
+   	console.log(Sub2.superclass.constructor.superclass.constructor);//f Base(){}
+
+
+
+   	// 一个容易掉入的陷阱（gotchas） 之前提到constructor易变，那是因为函数的prototype属性容易被更改，我们用时下很流行的编码方式来说明问题，请看下面的示例代码
+   	
+   	function F(){};
+
+   	F.prototype = {
+   		_name:"Ken",
+   		getName(){
+   			return this._name;
+   		},
+   	}
+
+   	// 初看这种方式并无问题，但是你会发现下面的代码失效了：
+   	
+   	var f = new F();
+   	console.log(f.constructor===F);//false
+
+   	/**
+   	 * 怎么回事？F不是实例对象f的构造函数了吗？
+
+当然是！只不过构造函数F的原型被开发者重写了，这种方式将原有的prototype对象用一个对象的字面量{}来代替。
+
+而新建的对象{}只是Object的一个实例，系统（或者说浏览器）在解析的时候并不会在{}上自动添加一个constructor属性，因为这是function创建时的专属操作，仅当你声明函数的时候解析器才会做此动作。
+   	 */
+   	
+
+   	// 然而你会发现constructor并不是不存在的，下面代码可以测试它的存在性：
+   	console.log(typeof f.constructor == 'undefined');//false
+
+
+   	/**
+   	 * 既然存在，那这个constructor是从哪儿冒出来的呢？
+
+我们要回头分析这个对象字面量{}。
+
+因为{}是创建对象的一种简写，所以{}相当于是new Object()。
+
+那既然{}是Object的实例，自然而然他获得一个指向构造函数Object()的prototype属性的一个引用__proto__，又因为Object.prototype上有一个指向Object本身的constructor属性。所以可以看出这个constructor其实就是Object.prototype的constructor，下面代码可以验证其结论： 
+   	 */
+   	
+   	console.log(f.constructor === Object.prototype.constructor);//true;
+
+   	console.log(f.constructor === Object);//true
+
+
+   	// 一个解决办法就是手动恢复他的constructor，下面代码非常好地解决了这个问题
+   	F.prototype = {
+   		constructor:F,
+   		_name:"Ken",
+   		getName(){
+   			return this._name;
+   		}
+   	}
+
+   	// 之后一切恢复正常，constructor重新获得的构造函数的引用，我们可以再一次测试上面的代码，这次返回true 
+   	// 
+   	var f = new F(); 
+   	console.log(f.constructor === F);//true
+
+
+   	// 解惑：构造函数上怎么还有一个constructor？它又是哪儿来的？ 
+// 细心的朋友会发现，像JavaScript内建的构造函数，如Array, RegExp, String, Number, Object, Function等等居然自己也有一个constructor: 
+	console.log(typeof Array.constructor != 'undefined');//true
+
+	// 经过测试发现，此物非彼物它和prototype上constructor不是同一个对象，他们是共存的
+	console.log(typeof Array.prototype.constructor === Array);//true
+
+
+	/**
+	 * 不过这件事情也是好理解的，因为构造函数也是函数。
+是函数说明它就是Function构造函数的实例对象，自然他内部也有一个指向Function.prototype的内部引用__proto__啦。
+因此我们很容易得出结论，这个constructor（构造函数上的constructor不是prototype上的）其实就是Function构造函数的引用
+	 */
+	
+	console.log(Array.constructor === Function);//true
+
+	console.log(Function.constructor === Function)
+</script>	
+</body>
+</html>

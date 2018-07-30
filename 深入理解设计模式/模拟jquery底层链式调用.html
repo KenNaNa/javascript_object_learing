@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<input type="button" value='点击我' id='inp' />
+<script>
+	// 模拟jquery底层代码链式调用
+	// 块级作用域
+	// 程序自执行
+	(function(window,undefined){
+
+		// $是最常用的对象，返回给外界的window对象，一般大型程序用'_'作为私有对象
+		function _$(arguments){
+			// 定义一个正则表达式来获取id属性名
+			var idSelector = /#\w+/;
+
+			// 内置一个don属性
+			this.dom;//用来储存获取的dom元素
+
+			// 如果匹配成功，就存储DOM元素
+			// 否则就抛出错误
+			// 获取传进来的参数
+			var str = arguments[0];
+			if(idSelector.test(str)){
+
+				// 截取#后面的字符串
+				// #inp
+				// 截取结果就是inp
+				var id = str.substring(1);
+
+				this.dom = document.getElementById(id);
+
+
+			}else{
+				throw new Error('传进来的参数不是字符串');
+			}
+
+		}
+
+		// 在Function上扩展一个可以进行链式编程的方法出来
+		Function.prototype.method = function(methodName,fn){
+			this.prototype[methodName] = fn;
+			// this指向_$对象
+			return this;
+		}
+
+		// 在_$的原型对象上添加公共方法
+		_$.prototype = {
+			constructor:_$,
+			addEvent:function(fnName,fn){
+				// FF类型
+				if(window.addEventListener){
+					this.dom.addEventListener(fnName,fn,false);
+				}else if(window.attachEvent){//IE
+					this.dom.attachEvent('on'+fnName,fn);
+				}
+
+				// console.log('addEvent');
+
+				// 返回对象
+				return this;
+			},
+			setStyle:function(prop,value){
+
+				this.dom.style[prop] = value;
+
+				// console.log('setStyle');
+
+				return this;
+			},
+		}
+
+		// 在window上注册一个全局函数与外界产生关系
+		window.$ = _$;
+
+		// 写一个准备函数
+		_$.onReady = function(fn){
+
+
+			// 实例化一个对象
+			window.$ = function(){
+				return new _$(arguments);
+			}
+
+			// 执行传进来的函数
+			fn();
+
+
+			// 实现链式编程
+			_$.method('addEvent',function(){
+				// nothing to do
+			}).method('setStyle',function(){
+				// nothing to do
+			});
+		}
+
+	})(window);
+
+
+	$.onReady(function(){
+		$('#inp').addEvent('click',function(){
+			console.log('我被点击了');
+		}).setStyle('backgroundColor','red');
+		console.log('1');
+	})
+</script>	
+</body>
+</html>

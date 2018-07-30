@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	// 简单的链式调用
+	function Dog(){
+		this.run = function(){
+			console.log('dog is running');
+
+			return this;
+		};
+
+		this.eat = function(){
+			console.log('dog is eating');
+
+			return this;
+		};
+
+		this.sleep = function(){
+			console.log('dog is sleeping');
+
+			return this;
+		}
+	}
+
+	var d = new Dog();
+	// 我们要实现d.run().eat().sleep()链式调用
+	// 那么我们只要在每个函数里面的尾部添加
+	// return this；
+	// 返回这个实例化对象
+	
+	d.run().eat().sleep();
+</script>	
+</body>
+</html>

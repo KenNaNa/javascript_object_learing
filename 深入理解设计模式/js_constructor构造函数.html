@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	/**
+	 * 每次实现JS的继承时，代码里必有如下两句：
+	 * //  用于设置原型
+	 * Employee.prototype = new Person()
+	 * //  设置原型的构造器
+	 * Employee.prototype.constructor=Employee
+	 */
+	
+
+	function Person(username){
+		this.username = username;
+	}
+
+	Person.prototype.setUsername = function(username){
+		this.username = username;
+	}
+
+
+	Person.prototype.getUsername = function(){
+		return this.username;
+	}
+
+	// 继承，
+	// 到底继承的是父对象的那些东西呢
+	
+	function Employee(username,company){
+		// 本来我们可以这样写
+		// this.username = username;
+		// 但是由于function Person(username){
+		// 		this.username = username;
+		// 		已经实现了
+		// 		所以我们就用继承把它继承多来
+		// }
+		Person.call(this,username);
+		this.company = company;
+	}
+
+	// 设置原型链
+	// 使用继承原来Person原型上的方法
+	Employee.prototype = new Person()
+	// Employee.prototype.__proto__ = Person.prototype;
+	// 通过new 出来的实例化对象是可以
+	// 直接访问原型上的方法的
+	// 所以我们可以使用
+	// Employee.prototype = new Person();
+	// Employee.prototype = Person.prototype;
+	// console.log(new Person());
+
+	// 设置构造器
+	Employee.prototype.constructor = Employee;
+	// 如果我们
+
+	var yiifaa = new Employee('yiifaa', '360');
+
+
+	console.log(yiifaa)
+	var n = yiifaa.getUsername();
+
+	console.log(n)
+
+	/**
+	 * 1. 会影响原型链吗？
+	 * 其实可以很容易反证，如果影响原型链的话，
+	 * constructor应该设置为Person
+	 * 才对，否则不就形成死循环了吗？
+	 */
+	
+	//  显然，prototype与constructor已经形成了双向联系
+	//  结果恒为真
+	var b = Employee.prototype.constructor.prototype.constructor === Employee;
+	console.log(b);//true
+
+	// 建立原型链主要靠proto属性，如下：
+	//  显然，通过__proto__可以链接到原型的顶端
+	//  结果恒为真
+	console.log(Employee.prototype.__proto__ === Person.prototype);
+	console.log(Person.prototype.__proto__ === Object.prototype);
+
+	//  一直获取到原型链的顶端
+	console.log(Employee.prototype.__proto__.__proto__  === Object.prototype);
+
+	console.log(Employee.prototype);//Person {username: undefined, constructor: ƒ}
+
+
+	console.log(Employee.prototype.__proto__);//{setUsername: ƒ, getUsername: ƒ, constructor: ƒ}
+
+	// 由上面的代码可以看出，constructor对原型链毫无影响。
+
+
+	// 2. 会影响instanceof吗？
+	// 经过测试，无论有没有设置prototype.constructor，以下恒为真
+	console.log(yiifaa instanceof Person);
+	console.log(yiifaa instanceof Employee);
+
+
+	// 所以对instanceof毫无影响，那好问题来了，如何改变instanceof的结果呢?方法如下
+	Person.prototype = {};
+
+	console.log(yiifaa instanceof Person);//false
+	console.log(yiifaa instanceof Employee);//true
+
+	// 为什么呢？因为现在原型链的链已经断了,证明如下
+	console.log(Employee.prototype.__proto__ !== Person.prototype);//true
+
+
+	// 那怎么改回来呢？
+	Person.prototype = Employee.prototype.__proto__;
+	console.log(yiifaa instanceof Person);//true;
+
+
+	// 3. 会影响ownProperty吗？
+	// 显然，ownProperty只取决于构造函数，而不是构造函数的属性。
+	// 
+	// 5. 最佳应用场景
+	// 于是constructor的最佳应用场景为类型判断，如下：
+	var arr = []
+	//  恒为真
+	console.log(arr.constructor === Array);//true
+	var num = 2
+	//  恒为真
+	console.log(num.constructor === Number);//true
+	var str = '123'
+	//  恒为真
+	console.log(str.constructor === String);//true
+
+
+	// prototype.constructor仅仅可以用于识别对象是由哪个构造函数初始化的，仅此而已
+</script>	
+</body>
+</html>

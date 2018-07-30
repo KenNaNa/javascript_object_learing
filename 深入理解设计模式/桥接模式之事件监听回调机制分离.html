@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<input type="button" id='inp' value='我是数据' />
+<script>
+	
+
+
+var BH = {};
+BH.EventUtil = {
+	addHandler:function(element,type,handler){
+		if(element.addEventListener){
+			element.addEventListener(type,handler,false);
+		}else if(element.attachEvent){
+			element.attachEvent('on'+type,handler);
+		}
+	},
+
+	removeHandler:function(element,type,handler){
+		if(element.removeEventListener){
+			element.removeEventListener(type,handler,false);
+		}else if(element.detachEvent){
+			element.detachEvent('on'+type,handler);
+		}
+	}
+}
+
+
+
+	// 桥接模式：主要作用是把抽象和实现分离出来
+	// 事件监听回调机制
+	// 点击按钮，向服务器发送请求
+	
+	// 相当于window.onload
+	$(function(){
+
+		var inp = document.getElementById('inp');
+
+
+		// 前台数据处理
+		// 为按钮添加事件
+		BH.EventUtil.addHandler(inp,'click',bridgeHandler);
+
+
+
+		// 现在使用桥接模式
+		function bridgeHandler(){
+			var msg = this.value;
+			sendReq(msg);
+		}
+
+
+		// 后台数据处理
+		// 处理函数
+		function sendReq(msg){
+			// $.post(url, data, success)
+			$.post("http://www.baidu.com/",{
+				msg:msg,
+			},function(results){
+				console.log(results);
+			})
+		}
+
+
+	})
+
+
+
+
+</script>	
+</body>
+</html>

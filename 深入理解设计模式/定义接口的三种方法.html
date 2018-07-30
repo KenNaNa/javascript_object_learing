@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	// javascript的接口的三种方法
+	// 注释接口
+	var Composite = function (){
+		function add(obj){
+
+		};
+		function remove(obj){
+
+		};
+		function update(obj){
+
+		};
+
+	}
+
+	// 上面这种方法会浪费资源
+	// 因为我们每一次创建实例化对象时都会去创建每一个函数add,remove , update
+	// 我们因该避免这种方法
+	// 我们应该写在对象原型上，属于共享性的
+	
+	var Composite = function(){}
+
+	Composite.prototype.add = function(obj){};
+	Composite.prototype.remove = function(obj){};
+	Composite.prototype.update = function(obj){}
+
+    var FormItem = function(){};
+    FormItem.prototype.select = function(obj){};
+
+	// 属性检测接口
+	var Composite1 = function(){
+		// 显示在类的内部，接受实现的接口
+		// 名字变量固定下来
+		this.implementInterfaces = ['Composite','FormItem'];
+	}
+
+
+	Composite1.prototype.add = function(obj){
+		console.log('add');
+	};
+	Composite1.prototype.remove = function(obj){};
+	Composite1.prototype.update = function(obj){};
+	Composite1.prototype.select = function(obj){};
+
+
+	// 检测当前这个类的属性
+	function CheckComposite1(instance){
+		// 判断当前类是否实现类的接口
+		if(!isImplements(instance,'Composite','FormItem')){
+			throw new Error('Object does not implement a required interface');
+		}
+	}
+
+	// 检测是否实现类的接口的函数 返回boolean
+	function isImplements(){
+		// 接受一些参数
+		// 把第一个参数频闭掉
+		// 获取第一个参数
+		var instance = arguments[0];
+		for(var i=1,l=arguments.length;i<l;i++){
+			// 接受接口参数
+			var interfaceName = arguments[i];
+			// 判断接口是否找到
+			var interfaceFound = false;
+
+
+			// 循环判断接口
+			for(var j=0,l=instance.implementInterfaces.length;j<l;j++){
+				if(instance.implementInterfaces[j]===interfaceName){
+					interfaceFound = true;
+					break;
+				}
+			}
+
+
+			if(!interfaceFound){
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	var c1 = new Composite1();
+	CheckComposite1(c1);
+
+	// 鸭式类型接口
+	// javascript实现接口最完美的方法
+	// 把接口的方法实现，检测方法
+	// 完全实现面向对象
+	// 代码统一化，也解耦了
+	
+	// 实现一个接口类 interface ===> 实现N多个接口方法
+	// 需要两个参数
+	// 接口名称：name
+	// 接口方法：methods是一个数组
+	var interface = function(name,methods){
+		// 判断参数的长度
+		if(arguments.length!==2){
+			throw new Error(`this interface's arguments's length must be 2`);
+		}
+
+		this.name = name;
+		this.methods = [];
+		// 用于接受数组参数
+		for(var i=0,l=methods.length;i<l;i++){
+			if(typeof methods[i]!=='string'){
+				throw new Error(`the method's name must be a string`);
+			}
+			this.methods.push(methods[i]);
+		}
+	}
+
+	// 实现接口实例化对象
+	var Composite1Interface = new interface('Composite1Interface',['add','remove','update','select']);
+
+	var FormItemInterface = new interface('FormItemInterface',['select']);
+
+
+	// 实现接口方法检测
+	interface.ensureImplements = function(){
+		// 当参数的长度<2时抛出异常
+		if(arguments.length<2){
+			throw new Error(`the method's arguments's length must more than 2`);
+		}
+
+		// 获取实例化接口
+		// 获取参数的第一个
+		var c = arguments[0];
+		for(var i=1,l=arguments.length;i<l;i++){
+			var instanceInterface = arguments[i];
+
+			// 判断参数是否是接口类型
+			if(instanceInterface.constructor!==interface){
+				throw new Error(`this instanceInterface's constructor must be interface`);
+			}
+
+			// 继续循环
+			// 搜索接口实例对象的每一个接口方法
+			for(var j=0,l=instanceInterface.methods.length;j<l;j++){
+				var methodName = instanceInterface.methods[j];
+				// 判断c[methodName]是否存在
+				// 判断c[methodName]类型是否为function
+				if(!c[methodName]||typeof c[methodName]!=='function'){
+					throw new Error('the method is not be found');
+				}
+			}
+		}
+	}
+
+	interface.ensureImplements(c1,Composite1Interface,FormItemInterface);
+
+	c1.add()
+</script>	
+</body>
+</html>

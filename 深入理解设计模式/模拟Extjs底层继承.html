@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+
+	// 只继承父类的原型对象
+	function extend(sub,sup){
+		// 创建一个空间函数，作为中转站
+		var F =  new Function();
+		// 实现空函数与超类函数的原型继承
+		F.prototype = sup.prototype;
+
+		// 实现子类原型与空函数实例的继承
+		sub.prototype = new F();
+
+
+		// 指定子类的构造器
+		sub.prototype.constructor = sub;
+
+		// 方便解耦
+		// 方便获取父类的原型对象
+		sub.superclass = sup.prototype;
+
+
+		// 所以我们要判断父类的原型为Object.prototype.constructor
+		if(sup.prototype.constructor===Object.prototype.constructor){
+			sup.prototype.constructor = sup;
+		}
+	}
+	// 混合继承
+	// 父类模板
+	function Person(name,age){
+		this.name = name;
+		this.age = age;
+	}
+
+	// 父类的原型属性
+	Person.prototype = {
+		constructor:Person,//没加上这句话默认constructor为Object
+		sayHello(){
+			console.log('hello');
+		}
+	};
+
+
+	// 子类
+	function Boy(name,age,sex){
+		Person.call(this,name,age);//只复制父类的模板，借用构造函数
+		// Boy.superclass.constructor.call(this,name,age);
+		this.sex = sex;
+	}
+
+
+	Boy.prototype = new Person();//其实即继承了父类的模板，又继承了原型对象
+
+
+	//之所以继承了父类的模板之后去调用.name时是undefined
+	//是因为继承了模板之后没给他传入name
+	// 当我们吧Person.call(this,name,age)去掉
+	
+	var b = new Boy('nana',18,'nana');
+
+	console.log(b.name);
+	console.log(b.age);
+
+
+	console.log('-----------------------------')
+
+	// 使用extend方法
+	extend(Boy,Person);
+
+
+	var bb = new Boy('Ken',23,'娜娜');
+
+	console.log(bb.name);
+	console.log(bb.age);
+	console.log(bb.sex);
+
+	bb.sayHello();
+
+	// 如果子类也有一个函数跟父类的函数
+	Boy.prototype.sayHello = function(){
+		console.log('javascript');
+		// 这样这个函数会把父类的sayHello()
+		// 覆盖掉了，
+		// 所以我们在extend函数里面保存了
+		// sub.superclass = sup.prototype
+		// 父类的原型对象
+	}
+</script>	
+</body>
+</html>

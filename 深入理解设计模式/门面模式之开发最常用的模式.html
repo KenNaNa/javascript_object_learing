@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<div id="div1">我是div1</div>
+<div id="div2">我是div2</div>
+<div id="div3">我是div3</div>
+<script>
+	// 门面模式最典型的就是 监听事件
+	// 做一件事需要调用a , b
+	function a(x){
+		console.log(x);
+	}
+
+	function b(y){
+		console.log(y);
+	}
+
+	function ab(x,y){
+		a(x);
+		b(y);
+	}
+	// 这时我们需要同时给多个元素添加背景
+	window.onload = function(){
+		var ele = document.getElementById('div1');
+		ele.style.backgroundColor = 'blue';
+
+		// 给多个元素设置同样的样式
+		setStyle(['div1','div2','div3'],"color","blue");
+
+		// 给多个元素设置多个样式
+		setCss(['div1','div2','div3'],{
+				position:"absolute",
+				backgroundColor:"black",
+				fontSize:"20px",
+				left:"100px"
+		})
+	}
+
+	// 所以就有简单门面模式了
+	function setStyle(eleIds,prop,val){
+		for(var i=0,length=eleIds.length;i<length;i++){
+			document.getElementById(eleIds[i]).style[prop] = val;
+		}
+	}
+
+
+	function setCss(eleIds,option){
+		for(var prop in option)
+			if(option.hasOwnProperty(prop))continue;
+			setStyle(eleIds,prop,option[prop]);
+	}
+</script>	
+</body>
+</html>

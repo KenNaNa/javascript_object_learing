@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+<script>
+	// 简单单体模式
+	var Singleton = {
+		attr1:true,
+		attr2:10,
+		method1:function(){},
+		method2:function(){},
+	}
+
+	// 就是可以划分命名空间
+	var Ken = {};
+	Ken.Singleton = {
+		attr1:true,
+		attr2:10,
+		method1:function(){},
+		method2:function(){},
+	}
+
+
+	// 借用闭包创建单体
+	// 闭包的目的主要是为了保护数据
+	var Ken = {}
+	Ken.Singleton = (function(){
+		// 可以在这个作用域添加自己的数据
+		// 创建一个私有的作用域
+		// 使用闭包的作用
+		var a1 = 0;
+		var a2 = 10;
+		var method12 = function(){};
+		var method22 = function(){};
+
+
+		return {
+		attr1:true,
+		attr2:10,
+		method1:function(){},
+		method2:function(){},
+		a1:a1,
+		a2:a2,
+		method12:method12,
+		method22:method22,
+	}
+
+	})()
+
+
+	// 惰性单体
+	// 与闭包相似
+	// 命名空间
+	var Ken = {};
+	Ken.Base = (function(){
+		// 创建一个私有变量
+		// 用来返回控制的单体对象
+		var uniqInstance;
+
+		
+
+		// 构造一个初始化函数init()
+		function init(){
+			var a1 = 0;
+			var a2 = 10;
+			var method12 = function(){};
+			var method22 = function(){};
+
+			return {//返回一个单体对象
+				a1:a1,
+				a2:a2,
+				method12:method12,
+				method22:method22,
+			}
+		}
+
+		return {
+			getInstance:function(){
+				if(!uniqInstance){//这个变量的值不存在的时候
+					// 就去创建一个单体对象
+					uniqInstance = init();
+				}
+
+				return uniqInstance;
+			}
+		}
+
+	})();
+
+
+	console.log(Ken.Base.getInstance().a1);
+
+
+	// 分支单体
+	var Ken = {};
+	var def = true;
+
+	Ken.Check = (function(){
+		var objA = {
+			attrA:'FF属性',
+		};
+
+		var objB = {
+			attrB:'IE属性',
+		};
+	})();
+</script>	
+</body>
+</html>
